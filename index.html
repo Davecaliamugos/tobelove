@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crush kuno</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fecfef);
+      text-align: center;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: crimson;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      padding: 0 10px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      margin: 12px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    #yesBtn {
+      background: crimson;
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+
+    #yesBtn:active {
+      transform: scale(1.3);
+      box-shadow: 0 0 30px crimson;
+    }
+
+    #noBtn {
+      background: white;
+      color: crimson;
+      border: 2px solid crimson;
+      position: absolute;
+    }
+
+    /* Responsive video container */
+    #video {
+      display: none;
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    #video video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    /* Floating hearts */
+    .heart {
+      position: absolute;
+      bottom: 0;
+      color: red;
+      font-size: 20px;
+      animation: floatUp 5s linear infinite;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 0.8; }
+      100% { transform: translateY(-800px) scale(1.5); opacity: 0; }
+    }
+
+    /* Pulse effect */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Exploding broken hearts */
+    .broken-heart {
+      position: absolute;
+      font-size: 24px;
+      animation: explode 1s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1) translate(0,0); opacity: 1; }
+      100% { transform: scale(0.5) translate(var(--x), var(--y)); opacity: 0; }
+    }
+
+    /* Fade out class */
+    .fade-out {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      .btn {
+        font-size: 16px;
+        padding: 12px 22px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Crush moko noh? 💕</h1>
+  <button id="yesBtn" class="btn">Oo 💖</button>
+  <button id="noBtn" class="btn">Hindi 💔</button>
+
+  <div id="video">
+    <video controls autoplay>
+      <source src="otot - Trim.mp4" type="video/mp4">
+      Your browser does not support video.
+    </video>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const video = document.getElementById("video");
+
+    // YES button click
+    yesBtn.addEventListener("click", () => {
+      yesBtn.classList.add("fade-out");
+      noBtn.classList.add("fade-out");
+
+      setTimeout(() => {
+        yesBtn.style.display = "none";
+        noBtn.style.display = "none";
+        video.style.display = "block";
+        setTimeout(() => video.style.opacity = "1", 100);
+      }, 500);
+
+      createHearts(20); // burst of hearts
+      confettiHearts(); // extra effect
+    });
+
+    // NO button dodge movement
+    noBtn.addEventListener("mouseover", moveNoBtn);
+    noBtn.addEventListener("touchstart", moveNoBtn); // mobile tap dodge
+
+    function moveNoBtn() {
+      const directions = ["up", "down", "left", "right"];
+      const choice = directions[Math.floor(Math.random() * directions.length)];
+      let top = noBtn.offsetTop;
+      let left = noBtn.offsetLeft;
+
+      if (choice === "up") top -= 60;
+      if (choice === "down") top += 60;
+      if (choice === "left") left -= 60;
+      if (choice === "right") left += 60;
+
+      noBtn.style.top = top + "px";
+      noBtn.style.left = left + "px";
+
+      if (
+        top < 0 || 
+        left < 0 || 
+        top > window.innerHeight - 50 || 
+        left > window.innerWidth - 100
+      ) {
+        noBtn.style.display = "none";
+      }
+    }
+
+    // click effect for NO → exploding broken hearts
+    noBtn.addEventListener("click", (e) => {
+      for (let i = 0; i < 6; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("broken-heart");
+        heart.innerHTML = "💔";
+        heart.style.left = e.pageX + "px";
+        heart.style.top = e.pageY + "px";
+        heart.style.setProperty("--x", (Math.random() * 200 - 100) + "px");
+        heart.style.setProperty("--y", (Math.random() * 200 - 100) + "px");
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 1000);
+      }
+      noBtn.style.display = "none";
+    });
+
+    // floating hearts generator
+    function createHearts(count = 1) {
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.fontSize = Math.random() * 20 + 15 + "px";
+        heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+    }
+
+    // continuous background hearts
+    setInterval(() => createHearts(1), 800);
+
+    // Confetti hearts effect
+    function confettiHearts() {
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("broken-heart");
+        heart.innerHTML = "💖";
+        heart.style.left = (window.innerWidth / 2) + "px";
+        heart.style.top = (window.innerHeight / 2) + "px";
+        heart.style.setProperty("--x", (Math.random() * 400 - 200) + "px");
+        heart.style.setProperty("--y", (Math.random() * 400 - 200) + "px");
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 1200);
+      }
+    }
+  </script>
+</body>
+</html>
